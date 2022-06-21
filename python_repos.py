@@ -11,7 +11,7 @@ print(f"Status code: {r.status_code}")
 
 #API yanıtını bir değişkende sakla.
 response_dict=r.json()
-repo_names,stars, labels = [],[],[]
+repo_links,stars, labels = [],[],[]
 print(f"Total repositories: {response_dict['total_count']}")
 
 
@@ -22,7 +22,10 @@ print(f"Total repositories: {response_dict['total_count']}")
 repo_dicts=response_dict['items']
 print(f"Repositories Returned: {len(repo_dicts)}")
 for repo_dict in repo_dicts:
-    repo_names.append(repo_dict['name'])
+    repo_name=repo_dict['name']
+    repo_url=repo_dict['html_url']
+    repo_link=f"<a href='{repo_url}'>{repo_name}</a>"
+    repo_links.append(repo_link)
     stars.append(repo_dict['stargazers_count'])
     owner=repo_dict['owner']['login']
     description=repo_dict['description']
@@ -32,7 +35,7 @@ for repo_dict in repo_dicts:
 #Görselleştirme yap.
 data=[{
     'type':'bar',
-    'x':repo_names,
+    'x':repo_links,
     'y':stars,
     'hovertext':labels,
     'marker':{
