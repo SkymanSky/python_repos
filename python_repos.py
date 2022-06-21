@@ -1,3 +1,4 @@
+from cProfile import label
 import requests
 from plotly.graph_objs import Bar
 from plotly import offline
@@ -10,7 +11,7 @@ print(f"Status code: {r.status_code}")
 
 #API yanıtını bir değişkende sakla.
 response_dict=r.json()
-repo_names,stars = [],[]
+repo_names,stars, labels = [],[],[]
 print(f"Total repositories: {response_dict['total_count']}")
 
 
@@ -23,18 +24,38 @@ print(f"Repositories Returned: {len(repo_dicts)}")
 for repo_dict in repo_dicts:
     repo_names.append(repo_dict['name'])
     stars.append(repo_dict['stargazers_count'])
+    owner=repo_dict['owner']['login']
+    description=repo_dict['description']
+    label=f"{owner}<br />{description}"
+    labels.append(label)
 
 #Görselleştirme yap.
 data=[{
     'type':'bar',
     'x':repo_names,
     'y':stars,
+    'hovertext':labels,
+    'marker':{
+        'color':'rgb(60,100,150)',
+        'line':{'width':1.5,'color':'rgb(25,25,25)'}
+    },
+    'opacity':0.6,
 }]
 
-my_layout={
-    'title':'Most-Starred Python Projects on GitHub ',
-    'xaxis':{'title':'Repository'},
-    'yaxis':{'title':'Stars'}
+my_layout = {
+    'title': 'Most-Starred Python Projects on GitHub',
+    'titlefont': {'size': 28},
+    'xaxis': {
+        'title': 'Repository',
+        'titlefont': {'size': 24},
+        'tickfont': {'size': 14},
+    },
+    'yaxis': {
+        'title': 'Stars',
+        'titlefont': {'size': 24},
+        'tickfont': {'size': 14},
+    },
+
 }
 
 fig={'data':data,'layout':my_layout}
